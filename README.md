@@ -1,5 +1,9 @@
 # BlueSpurs Interview Test
 
+- [Task 1](#task-1)
+- [Task 2 (BONUS)](#task-2-bonus)
+- [Task 1 Solution Description](#task-1-solution-description)
+
 ## Task 1
 
 Your task is to create a RESTful web service endpoint that allows a client to input a product name as a GET query parameter and returns the cheapest product.
@@ -234,3 +238,21 @@ If validation fails, Spring will terminate the request and generate an HTTP 400 
 ## Generating a WAR
 
 The starter kit is only configured to run inside of a Tomcat servlet container. To generate the WAR file, run: `./gradlew bootRepackage`. For this project, `bootRepackage` has been configured to depend on `test`, meaning that a WAR file cannot be deployed if any tests are failing.
+
+
+## Task 1 Solution Description
+
+Solution contains only task 1 implementation. 
+Controller level is represented by `ProductController`, that deligates real work to `ProductService` implementation (`ProductServiceImpl`). This service uses `RestTemplate` for invocation of actual API for each of registered seller. Seller is described by domain class `Seller`, that encloses all actual seller information like name, API key, URL template, and also informaiotn about returned JSON structure - like products node name, and names of the elements, there name and best price are stored. Rest template, making a request, does not directly map a resulting JSON to any particular object because it would require a separate mapper implementation for each new seller (and keeping process of adding new seller simple is critical). Instead, helper method is used to create new `Product` POJO from returned `JsonNode` object and current seller - this object is the one, that is returned to the client as JSON and is similar for all sellers. 
+
+New seller could be added in `ApplicationConfiguration` class, directly into sellers collections. Builder is provided (and should be used) for creating new instances. Builder also ensures, that provided about seller information is complete. 
+
+Error handling is implemented by `ErrorController`, that handles different types of exceptions and returns corresponding HTTP response code and user-friendly message about the error. Custom exceptions include `ProductNotFoundException` (when product is not found) and `BadHttpResponseException` (when seller returns NOT-OK HTTP response code). Situations with wrong API keys, not supplied product name, and bad HTTP requests are handled using Spring framework exceptions. No error page is supplied (so trying to use not mapped request will show standard error page).
+
+API keys can be found in `application.properties` file, that is incorrect - in production system they should be injected from environment variables.
+
+Tests are implemented only for `ProductController` class, that also is not good (I remember about TDD), but due to time restriction I've decidede, that working app could be more interesting, than working tests. So, if I could create TODO list for applicaiton - first item for this list is normal test coverage.
+
+Another item for TODO - checking, that provided sellers information is correct during application startup, and signaling that something is wrong when information is not correct (like URL is not responding, or API key is not correct, or provided info about returned JSON is not correct), so critical information could be corrected ASAP.
+
+It was all I was able to implement within required timeframe, so maybe I'm just too slow for you :)
