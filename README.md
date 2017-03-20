@@ -243,7 +243,7 @@ The starter kit is only configured to run inside of a Tomcat servlet container. 
 ## Task 1 Solution Description
 
 Solution contains only task 1 implementation. 
-Controller level is represented by `ProductController`, that deligates real work to `ProductService` implementation (`ProductServiceImpl`). This service uses `RestTemplate` for invocation of actual API for each of registered seller. Seller is described by domain class `Seller`, that encloses all actual seller information like name, API key, URL template, and also informaiotn about returned JSON structure - like products node name, and names of the elements, there name and best price are stored. Rest template, making a request, does not directly map a resulting JSON to any particular object because it would require a separate mapper implementation for each new seller (and keeping process of adding new seller simple is critical). Instead, helper method is used to create new `Product` POJO from returned `JsonNode` object and current seller - this object is the one, that is returned to the client as JSON and is similar for all sellers. 
+Controller level is represented by `ProductController`, that deligates real work to `ProductService` implementation (`ProductServiceImpl`). This service uses `RestTemplate` for invocation of actual API for each of registered seller. Seller is described by domain class `Seller`, that encloses all actual seller information like name, API key, URL template, and also information about returned JSON structure - like products node name, and names of the elements, where name and best price are stored. Rest template, making a request, does not directly map a resulting JSON to any particular object because it would require a separate mapper implementation for each new seller (and keeping the process of adding new seller simple is critical). Instead, helper method is used to create new `Product` POJO from returned `JsonNode` object and current seller - this object is the one, that is returned to the client as JSON and is similar for all sellers. 
 
 New seller could be added in `ApplicationConfiguration` class, directly into sellers collections. Builder is provided (and should be used) for creating new instances. Builder also ensures, that provided about seller information is complete. 
 
@@ -251,7 +251,7 @@ Error handling is implemented by `ErrorController`, that handles different types
 
 API keys can be found in `application.properties` file, that is incorrect - in production system they should be injected from environment variables.
 
-Tests are implemented only for `ProductController` class, that also is not good (I remember about TDD), but due to time restriction I've decidede, that working app could be more interesting, than working tests. So, if I could create TODO list for applicaiton - first item for this list is normal test coverage.
+Tests are implemented only for `ProductController` class, that also is not good (I remember about TDD), but due to time restrictions I've decided, that working app could be more interesting, than working tests. So, if I could create TODO list for applicaiton - first item for this list is normal test coverage.
 
 Another item for TODO - checking, that provided sellers information is correct during application startup, and signaling that something is wrong when information is not correct (like URL is not responding, or API key is not correct, or provided info about returned JSON is not correct), so critical information could be corrected ASAP.
 
